@@ -1,0 +1,39 @@
+openapi: '3.0.2'
+info:
+  title: Sample Rest API
+  version: '0.1.0'
+servers:
+  - url: https://example.com/api/v1
+    description: prod
+  - url: http://{host}:{port}/api/v1
+    description: dev
+    variables:
+      host:
+        default: '127.0.0.1'
+      port:
+        default: '10081'
+paths:
+  /health:
+    get:
+      operationId: sample_rest_api.controller.health.get
+      summary: Health Check
+      description: response ok
+      responses:
+        '200':
+          description: サーバーは正常に動作しています
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_health_response'
+components:
+  schemas:
+    get_health_response:
+      description: Server is healthy.
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+      required:
+        - status

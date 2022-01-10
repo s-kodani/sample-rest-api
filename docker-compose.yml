@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  restapi:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    platform: linux/amd64
+    ports:
+      - "10081:10081"
+    environment:
+      MYSQL_URL: 'mysql+pymysql://test:user_pass@mysql/test'
+      PYTHONPATH: '/usr/src/app'
+    links:
+      - mysql
+    entrypoint:
+      - dockerize
+      - -timeout
+      - 60s
+      - -wait
+      - tcp://mysql:3356
+    command: poetry run python /usr/src/app/sample_rest_api/run.py
+
+  mysql:
+    image: mariadb:latest
+    platform: linux/amd64
+    ports:
+      - "3356:3356"
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root_pass'
+      MYSQL_DATABASE: 'test'
+      MYSQL_USER: 'test'
+      MYSQL_PASSWORD: 'user_pass'
+      MYSQL_TCP_PORT: '3356'
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
